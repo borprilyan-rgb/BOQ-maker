@@ -7,7 +7,7 @@ st.set_page_config(layout="wide", page_title="EasyRAB - Persiapan")
 # 2. Identitas Link Google Sheets (XLSX)
 # Ganti SHEET_ID dengan ID file Anda
 SHEET_ID = "1wpIZ-RYxdgn3kuKT7lsi7ZUEW_GAl3cGk1HOpVNmSlI"
-EXCEL_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=xlsx"
+EXCEL_URL = f"https://docs.google.com/spreadsheets/d/1wpIZ-RYxdgn3kuKT7lsi7ZUEW_GAl3cGk1HOpVNmSlI/export?format=xlsx"
 
 st.title("🏗️ Modul A: Persiapan & Bowplank")
 
@@ -62,3 +62,4 @@ try:
 except Exception as e:
     st.error(f"Koneksi gagal atau nama sheet salah. Error: {e}")
     st.info("Pastikan Google Sheets sudah di-share (Anyone with the link can view).")
+
