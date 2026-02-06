@@ -1,59 +1,54 @@
 import streamlit as st
 import pandas as pd
 
-# Judul Aplikasi
 st.set_page_config(layout="wide", page_title="EasyRAB Live Sync")
+
+# --- CONFIGURATION ---
+# Replace this with the "Publish to Web" CSV link from your Google Sheet
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1wpIZ-RYxdgn3kuKT7lsi7ZUEW_GAl3cGk1HOpVNmSlI/gviz/tq?tqx=out:csv&gid=489387629"
+
 st.title("🏗️ EasyRAB: Live Google Sheets Sync")
+st.write("This app updates automatically when you change data in Google Sheets.")
 
-# URL CSV dari Google Sheets Anda
-# Pastikan spreadsheet sudah di-"Publish to Web" sebagai CSV
-CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTW4nrVpk5u893A6ZCLPg_BC1yE6Xn2NYLVZtG0N4B4wVqukaUfrljPSeWQgTQhX2f07FczM8-Bb0g9/pub?output=csv"
+# --- TABS SETUP ---
+tabs = st.tabs(["📊 Dashboard", "A. Persiapan", "C. Pondasi"])
 
-@st.cache_data(ttl=60)  # Refresh data setiap 60 detik
-def load_data(url):
-    return pd.read_csv(url)
+# --- DATA LOADING FUNCTION ---
+@st.cache_data(ttl=60) # Refreshes every 60 seconds
+def load_sheet_data(url):
+    df = pd.read_csv(url)
+    return df
 
-# Membuat Tab seperti di Excel
-tab_summary, tab_persiapan, tab_gudang = st.tabs(["📊 Dashboard", "A. Persiapan", "B. Gudang Bahan"])
-
-try:
-    df = load_data(CSV_URL)
-
-    # --- TAB A: PERSIAPAN & BOWPLANK ---
-    with tab_persiapan:
-        st.header("Pekerjaan Pembersihan & Bowplank")
+# --- TAB: A. PERSIAPAN ---
+with tabs[1]:
+    st.header("Pekerjaan Persiapan (Live Data)")
+    
+    try:
+        df_a = load_sheet_data(SHEET_URL)
         
-        # Mengambil data dari baris yang mengandung kode 'A1' sampai 'A6'
-        # Berdasarkan format EasyRAB Anda, ID ada di kolom ke-3 (index 2)
-        mask_a = df.iloc[:, 2].str.startswith('A', na=False)
-        df_a = df[mask_a].copy()
+        # Display the 'Result' section (Filtering based on your EasyRAB structure)
+        # We look for rows that have 'A1', 'A2', etc. in the ID column
+        report_a = df_a[df_a.iloc[:, 2].str.startswith('A', na=False)].copy()
         
-        # Membersihkan kolom (mengambil kolom ID, Uraian, Harga Satuan, Vol, Sat)
-        # Menyesuaikan dengan index kolom di file asli Anda
-        report_a = df_a.iloc[:, [2, 3, 7, 8, 9]]
-        report_a.columns = ['ID', 'Uraian', 'Harga Satuan', 'Volume', 'Satuan']
+        # Select and rename columns for a clean look
+        # Note: Columns might be named 'Unnamed: X' if headers aren't perfect
+        clean_report = report_a.iloc[:, [2, 3, 7, 8, 9]] 
+        clean_report.columns = ['ID', 'Uraian', 'Harga Satuan', 'Volume', 'Satuan']
         
-        # Konversi ke angka agar bisa dikalikan
-        report_a['Harga Satuan'] = pd.to_numeric(report_a['Harga Satuan'], errors='coerce')
-        report_a['Volume'] = pd.to_numeric(report_a['Volume'], errors='coerce')
-        report_a['Total (Rp)'] = report_a['Harga Satuan'] * report_a['Volume']
+        # Calculation
+        clean_report['Total (Rp)'] = pd.to_numeric(clean_report['Harga Satuan']) * pd.to_numeric(clean_report['Volume'])
         
-        # Tampilkan Tabel
-        st.dataframe(report_a.dropna(subset=['ID']).style.format({
-            "Harga Satuan": "{:,.0f}",
-            "Volume": "{:.2f}",
-            "Total (Rp)": "{:,.2f}"
-        }), use_container_width=True, hide_index=True)
+        st.dataframe(clean_report, use_container_width=True, hide_index=True)
         
-        total_a = report_a['Total (Rp)'].sum()
+        total_a = clean_report['Total (Rp)'].sum()
         st.metric("Sub-Total Pekerjaan A", f"Rp {total_a:,.2f}")
+        
+    except Exception as e:
+        st.error(f"Waiting for valid CSV link... Error: {e}")
+        st.info("Make sure you have 'Published to Web' as CSV in Google Sheets.")
 
-    # --- TAB DASHBOARD ---
-    with tab_summary:
-        st.subheader("Ringkasan Anggaran")
-        st.write(f"Total Sementara (Kategori A): **Rp {total_a:,.2f}**")
-        st.info("Edit data di Google Sheets Anda, lalu refresh halaman ini untuk melihat perubahan.")
-
-except Exception as e:
-    st.error(f"Gagal memuat data. Pastikan link Google Sheets sudah di-'Publish to Web'.")
-    st.write(f"Detail Error: {e}")
+# --- TAB: DASHBOARD ---
+with tabs[0]:
+    st.subheader("Total Budget Overview")
+    if 'total_a' in locals():
+        st.write(f"Category A: **Rp {total_a:,.2f}**")
