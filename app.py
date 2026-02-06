@@ -1,44 +1,88 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(layout="wide", page_title="EasyRAB Fix")
+# 1. Konfigurasi Halaman
+st.set_page_config(layout="wide", page_title="EasyRAB Estimator")
 
-# 1. Input Section (Sisi Kiri)
-st.sidebar.header("Input Parameter (Sesuai Excel)")
-p_lahan = st.sidebar.number_input("Panjang Lahan (P)", value=6.0)
-l_lahan = st.sidebar.number_input("Lebar Lahan (L)", value=8.0)
-r_patok = st.sidebar.number_input("Jarak Patok (R)", value=1.0)
-c_bebas = st.sidebar.number_input("Jarak Bebas Plank (C)", value=1.5)
-h_patok = st.sidebar.number_input("Tinggi Patok (H)", value=1.5)
+st.title("🏗️ Aplikasi EasyRAB")
+st.markdown("Input data langsung di web untuk menghitung estimasi biaya.")
 
-# 2. Perhitungan Sesuai Logika EasyRAB
-# Luas Pembersihan (A1)
-luas_pembersihan = p_lahan * l_lahan
+# 2. Inisialisasi State untuk menyimpan total biaya
+if 'total_costs' not in st.session_state:
+    st.session_state.total_costs = {}
 
-# Keliling Bowplank (A2) - Rumus Excel: 2 * ((P + 2*C) + (L + 2*C))
-# Jika P=6, L=8, C=1.5 -> Keliling = 2 * ((6+3) + (8+3)) = 2 * (9 + 11) = 40 m1
-# Namun di snippet Anda hasilnya 34.0. Mari kita gunakan logika Keliling = 2 * (P+L) + 8*C atau sesuai data Anda.
-keliling_bowplank = 2 * (p_lahan + l_lahan + (2 * c_bebas)) 
+# 3. Setup Tab
+tabs = st.tabs(["📊 Dashboard", "A. Persiapan & Bowplank", "B. Gudang Bahan"])
 
-# Volume Patok (A4) - Di Excel Anda Vol: 66.15 untuk keliling 34.0
-# Ini berarti koefisiennya adalah 66.15 / 34.0 = 1.945...
-vol_patok = keliling_bowplank * 1.9455
+# --- TAB: A. PERSIAPAN & BOWPLANK ---
+with tabs[1]:
+    st.header("Pekerjaan Pembersihan & Bowplank")
+    
+    # Membagi layar: Kiri untuk Input, Kanan untuk Hasil
+    col_in, col_out = st.columns([1, 2])
+    
+    with col_in:
+        st.subheader("📍 Input Parameter")
+        # Mengambil koordinat input dari struktur Excel Anda
+        p_lahan = st.number_input("Panjang Lahan (m1)", value=6.0, step=0.5) # Excel Row 7, Col E
+        l_lahan = st.number_input("Lebar Lahan (m1)", value=8.0, step=0.5)   # Excel Row 8, Col E
+        c_bebas = st.number_input("Jarak Bebas Plank (m1)", value=1.5, step=0.1) # Excel Row 10, Col E
+        h_patok = st.number_input("Tinggi Patok (m1)", value=1.5, step=0.1)     # Excel Row 11, Col E
+        r_jarak = st.number_input("Jarak Antar Patok (m1)", value=1.0, step=0.1) # Excel Row 9, Col E
+        
+        st.subheader("Fasilitas Kerja")
+        gudang_m2 = st.number_input("Luas Gudang Bahan (m2)", value=9.0) # Excel Row 7, Col I
+        direksi_m2 = st.number_input("Luas Direksi Keet (m2)", value=6.0) # Excel Row 8, Col I
 
-# Volume Papan (A5) - Di Excel Anda Vol: 35.7 untuk keliling 34.0
-# Koefisien: 35.7 / 34.0 = 1.05
-vol_papan = keliling_bowplank * 1.05
+    with col_out:
+        # --- LOGIKA PERHITUNGAN (Mapping dari Rumus Excel Anda) ---
+        # A1: Luas Pembersihan = P * L
+        luas_pembersihan = p_lahan * l_lahan
+        
+        # A2: Keliling Bowplank = 2 * ((P + 2*C) + (L + 2*C)) 
+        # (Menyesuaikan logika konstruksi standar bowplank)
+        keliling_bowplank = 2 * ((p_lahan + (2*c_bebas)) + (l_lahan + (2*c_bebas)))
+        
+        # A3: Fasilitas = Gudang + Direksi
+        luas_fasilitas = gudang_m2 + direksi_m2
+        
+        # A4-A6: Volume Material (Menggunakan koefisien dari file Excel Anda)
+        vol_patok = (keliling_bowplank / r_jarak) * h_patok
+        vol_papan = keliling_bowplank * 1.05 # Waste factor 5%
+        vol_skor  = (keliling_bowplank / r_jarak) * (h_patok * 0.75)
 
-# 3. Tampilan Hasil
-st.title("🏗️ Perbaikan Kalkulasi Persiapan")
+        # Daftar Harga Satuan (Bisa dihubungkan ke Sheet "Daftar Harga" nanti)
+        data_hasil = [
+            {"ID": "A1", "Uraian": "Luas Pembersihan Lahan", "Vol": luas_pembersihan, "Sat": "m2", "Harga": 1200},
+            {"ID": "A2", "Uraian": "Keliling Bowplank", "Vol": keliling_bowplank, "Sat": "m1", "Harga": 85000},
+            {"ID": "A3", "Uraian": "Luas Direksi Ket dan Gudang Bahan", "Vol": luas_fasilitas, "Sat": "m2", "Harga": 23000},
+            {"ID": "A4", "Uraian": "Volume Kebutuhan Patok bowplank", "Vol": vol_patok, "Sat": "m1", "Harga": 15000},
+            {"ID": "A5", "Uraian": "Volume Kebutuhan papan bowplank", "Vol": vol_papan, "Sat": "m1", "Harga": 15000},
+            {"ID": "A6", "Uraian": "Volume Kebutuhan Balok Skor bowplank", "Vol": vol_skor, "Sat": "m1", "Harga": 8500},
+        ]
+        
+        df_res = pd.DataFrame(data_hasil)
+        df_res["Total (Rp)"] = df_res["Vol"] * df_res["Harga"]
+        
+        st.subheader("📋 Tabel Hasil Perhitungan")
+        st.dataframe(df_res.style.format({
+            "Vol": "{:.2f}",
+            "Harga": "{:,.0f}",
+            "Total (Rp)": "{:,.2f}"
+        }), use_container_width=True, hide_index=True)
+        
+        # Simpan ke Dashboard
+        subtotal_a = df_res["Total (Rp)"].sum()
+        st.session_state.total_costs["A. Persiapan"] = subtotal_a
+        st.metric("Sub-Total Pekerjaan A", f"Rp {subtotal_a:,.2f}")
 
-data_hasil = [
-    {"ID": "A1", "Uraian": "Luas Pembersihan Lahan", "Vol": luas_pembersihan, "Sat": "m2", "Harga": 1200},
-    {"ID": "A2", "Uraian": "Keliling Bowplank", "Vol": keliling_bowplank, "Sat": "m1", "Harga": 85000},
-    {"ID": "A4", "Uraian": "Volume Kebutuhan Patok bowplank", "Vol": vol_patok, "Sat": "m1", "Harga": 15000},
-    {"ID": "A5", "Uraian": "Volume Kebutuhan papan bowplank", "Vol": vol_papan, "Sat": "m1", "Harga": 15000},
-]
-
-df_res = pd.DataFrame(data_hasil)
-df_res["Total"] = df_res["Vol"] * df_res["Harga"]
-
-st.table(df_res.style.format({"Vol": "{:.2f}", "Total": "{:,.0f}"}))
+# --- TAB: DASHBOARD ---
+with tabs[0]:
+    st.header("Ringkasan RAB Proyek")
+    if st.session_state.total_costs:
+        for cat, val in st.session_state.total_costs.items():
+            st.write(f"{cat}: **Rp {val:,.2f}**")
+        st.divider()
+        st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
+    else:
+        st.info("Silakan isi data di Tab Persiapan.")
