@@ -17,12 +17,14 @@ tabs = st.tabs(["📊 Dashboard", "A. Persiapan & Bowplank", "B. Gudang Bahan"])
 # --- TAB: A. PERSIAPAN & BOWPLANK ---
 with tabs[1]:
     st.header("Pekerjaan Pembersihan & Bowplank")
+
+  # Tambahkan ini di bagian atas atau di dalam tab Persiapan
+st.image("persiapan bowplank.png", caption="Diagram Ilustrasi Bowplank", use_container_width=True)
     
     # Membagi layar: Kiri untuk Input, Kanan untuk Hasil
     col_in, col_out = st.columns([1, 2])
 
-     # Tambahkan ini di bagian atas atau di dalam tab Persiapan
-st.image("persiapan bowplank.png", caption="Diagram Ilustrasi Bowplank", use_container_width=True)
+   
     
     with col_in:
         st.subheader("📍 Input Parameter")
@@ -90,6 +92,7 @@ with tabs[0]:
         st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
     else:
         st.info("Silakan isi data di Tab Persiapan.")
+
 
 
 
