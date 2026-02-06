@@ -84,7 +84,7 @@ with tabs[1]:
         st.divider() # Garis pemisah agar rapi
         try:
             # Menggunakan folder 'gambar' sesuai request Anda
-            st.image("gambar/persiapan bowplank.png", caption="Diagram Ilustrasi Bowplank", use_container_width=True)
+            st.image("gambar/persiapan bowplank.png", caption="Diagram Ilustrasi Bowplank", width=600, use_container_width=True)
         except:
             st.info("💡 Tips: Pastikan file 'persiapan bowplank.png' sudah diunggah ke folder 'gambar' di repository Anda.")
 
@@ -98,6 +98,7 @@ with tabs[0]:
         st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
     else:
         st.info("Silakan isi data di Tab Persiapan.")
+
 
 
 
