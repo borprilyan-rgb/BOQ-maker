@@ -99,15 +99,6 @@ with col_out:
                 st.info("Gambar tidak ditemukan")
 
 # --- TAB: DASHBOARD ---
-with tabs[0]:
-    st.header("Ringkasan RAB Proyek")
-    if st.session_state.total_costs:
-        for cat, val in st.session_state.total_costs.items():
-            st.write(f"{cat}: **Rp {val:,.2f}**")
-        st.divider()
-        st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
-    else:
-        st.info("Silakan isi data di Tab Persiapan.")
 
     with tabs[1]:
         # ... (kode input dan perhitungan Anda) ...
@@ -190,6 +181,7 @@ with tabs[2]:
             st.image("gambar/gudang bahan.png", caption="Skema Gudang Bahan & Direksi Keet", width=600)
         except:
             st.info("💡 Tips: Taruh gambar 'gudang bahan.png' di folder 'gambar' untuk panduan visual.")
+
 
 
 
