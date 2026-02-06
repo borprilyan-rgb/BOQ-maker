@@ -71,6 +71,9 @@ with tabs[1]:
             "Harga": "{:,.0f}",
             "Total (Rp)": "{:,.2f}"
         }), use_container_width=True, hide_index=True)
+
+        # Tambahkan ini di bagian atas atau di dalam tab Persiapan
+st.image("nama_file_gambar.jpg", caption="Diagram Ilustrasi Bowplank", use_container_width=True)
         
         # Simpan ke Dashboard
         subtotal_a = df_res["Total (Rp)"].sum()
@@ -87,6 +90,7 @@ with tabs[0]:
         st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
     else:
         st.info("Silakan isi data di Tab Persiapan.")
+
 
 
 
