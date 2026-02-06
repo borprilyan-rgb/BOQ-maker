@@ -139,8 +139,37 @@ with tabs[2]:
         vol_seng      = (p_gudang * s_miring * 2) / 0.8 # B7
 
         # Daftar Hasil Material Gudang
-        data
+        data_gudang = [
+            {"ID": "B1", "Uraian": "Balok Kayu 5/10 (Rangka Utama)", "Vol": 0.28, "Sat": "m3", "Harga": 2800000},
+            {"ID": "B5", "Uraian": "Papan Kayu 2/20", "Vol": 0.17, "Sat": "m3", "Harga": 3200000},
+            {"ID": "B6", "Uraian": "Triplex 1/8 mm (Dinding)", "Vol": 29.04, "Sat": "Lbr", "Harga": 54000},
+            {"ID": "B7", "Uraian": "Seng Gelombang BJLS (Atap)", "Vol": 17.75, "Sat": "Lbr", "Harga": 80000},
+            {"ID": "B8", "Uraian": "Screw Atap / Paku Seng", "Vol": 64.0, "Sat": "bh", "Harga": 500},
+            {"ID": "B11", "Uraian": "Pasir Urug (Lantai Kerja)", "Vol": 0.08, "Sat": "m3", "Harga": 250000},
+        ]
+        
+        df_gudang = pd.DataFrame(data_gudang)
+        df_gudang["Total (Rp)"] = df_gudang["Vol"] * df_gudang["Harga"]
+        
+        st.subheader("📋 Tabel Kebutuhan Material & Biaya")
+        st.dataframe(df_gudang.style.format({
+            "Vol": "{:.2f}",
+            "Harga": "{:,.0f}",
+            "Total (Rp)": "{:,.2f}"
+        }), use_container_width=True, hide_index=True)
+        
+        # Simpan ke Dashboard
+        subtotal_b = df_gudang["Total (Rp)"].sum()
+        st.session_state.total_costs["B. Gudang Bahan"] = subtotal_b
+        st.metric("Sub-Total Pekerjaan B", f"Rp {subtotal_b:,.2f}")
 
+        # --- GAMBAR ILUSTRASI GUDANG ---
+        st.divider()
+        try:
+            # Pastikan Anda mengunggah file gambar skema gudang ke folder 'gambar'
+            st.image("gambar/gudang bahan.png", caption="Skema Gudang Bahan & Direksi Keet", width=600)
+        except:
+            st.info("💡 Tips: Taruh gambar 'gudang bahan.png' di folder 'gambar' untuk panduan visual.")
 
 
 
