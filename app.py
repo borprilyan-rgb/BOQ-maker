@@ -105,6 +105,41 @@ with tabs[0]:
     else:
         st.info("Silakan isi data di Tab Persiapan.")
 
+# --- TAB: B. GUDANG BAHAN ---
+with tabs[2]:
+    st.header("Pekerjaan Pembuatan Gudang Bahan")
+
+    # Membagi layar: Kiri untuk Input, Kanan untuk Hasil
+    col_in_b, col_out_b = st.columns([1, 2])
+
+    with col_in_b:
+        st.subheader("📍 Input Parameter Gudang")
+        p_gudang = st.number_input("Panjang Bangunan Gudang (m1)", value=2.5, step=0.1)
+        l_gudang = st.number_input("Lebar Bangunan Gudang (m1)", value=3.0, step=0.1)
+        t_dinding = st.number_input("Tinggi Dinding (m1)", value=2.4, step=0.1)
+        h_total = st.number_input("Tinggi Total Bangunan (m1)", value=2.9, step=0.1)
+        
+        st.divider()
+        st.subheader("Detail Spesifik")
+        c_pintu = st.number_input("Lebar Bukaan Pintu (m1)", value=1.0)
+        d_tiang = st.number_input("Jarak Antar Tiang Utama (m1)", value=1.5)
+        r_atap = st.number_input("Jarak Antar Reng Atap (m1)", value=0.6)
+        x_koef_b = st.number_input("Koefisien Volume Gudang", value=1.0, step=0.1)
+
+    with col_out_b:
+        # --- LOGIKA PERHITUNGAN (Mapping dari Rumus Excel EasyRAB) ---
+        keliling_b = 2 * (p_gudang + l_gudang)
+        # Sisi miring atap (Pythagoras sederhana atau sesuai template)
+        s_miring = 2.58 # Mengacu pada data teknis di file Anda
+        
+        # Volume Material (B1 - B8) - Rumus disederhanakan sesuai koefisien Excel
+        vol_balok_510 = (keliling_b * t_dinding * 0.01) + 0.15 # B1
+        vol_balok_46  = (p_gudang * l_gudang * 0.004) # B2
+        vol_triplex   = (keliling_b * t_dinding) / 1.2 # Estimasi jumlah lembar B6
+        vol_seng      = (p_gudang * s_miring * 2) / 0.8 # B7
+
+        # Daftar Hasil Material Gudang
+        data
 
 
 
