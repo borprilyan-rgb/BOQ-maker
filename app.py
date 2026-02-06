@@ -11,11 +11,12 @@ st.markdown("Sistem Estimasi Anggaran Biaya Konstruksi")
 if 'total_costs' not in st.session_state:
     st.session_state.total_costs = {
         "A. Persiapan & Bowplank": 0.0,
-        "B. Gudang Bahan": 0.0
+        "B. Gudang Bahan": 0.0,
+        "C. Pondasi Batu Kali": 0.0
     }
 
 # 3. Setup Tab
-tabs = st.tabs(["📊 Dashboard", "A. Persiapan & Bowplank", "B. Gudang Bahan"])
+tabs = st.tabs(["📊 Dashboard", "A. Persiapan & Bowplank", "B. Gudang Bahan", "C. Pondasi Batu Kali"])
 
 # --- TAB: DASHBOARD ---
 with tabs[0]:
@@ -28,7 +29,7 @@ with tabs[0]:
     # Membuat list data yang bersih untuk tabel
     summary_list = []
     # Kita hanya iterasi kunci yang sudah kita tentukan di inisialisasi
-    target_keys = ["A. Persiapan & Bowplank", "B. Gudang Bahan"]
+    target_keys = ["A. Persiapan & Bowplank", "B. Gudang Bahan", "C. Pondasi Batu Kali"]
     
     for kategori in target_keys:
         biaya = st.session_state.total_costs.get(kategori, 0.0)
@@ -194,3 +195,4 @@ with tabs[3]:
                 st.image("gambar/pondasi batu kali.png", caption="Detail Penampang Pondasi Batu Kali", width=600)
             except:
                 st.info("💡 Tip: Unggah gambar 'pondasi batu kali.png' ke folder 'gambar' untuk referensi visual.")
+
