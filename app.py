@@ -42,7 +42,7 @@ with tabs[1]:
         
         # A2: Keliling Bowplank = 2 * ((P + L + 2*C) * K
         # (Menyesuaikan logika konstruksi standar bowplank)
-        keliling_bowplank = 2 * ((p_lahan + l_lahan + (2*c_bebas) * k_volume)
+        keliling_bowplank = 2 * ((p_lahan + l_lahan + (2*c_bebas) * k_volume))
         
         # A3: Fasilitas = Gudang + Direksi
         luas_fasilitas = gudang_m2 + direksi_m2
@@ -87,4 +87,5 @@ with tabs[0]:
         st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
     else:
         st.info("Silakan isi data di Tab Persiapan.")
+
 
