@@ -80,18 +80,19 @@ with tabs[1]:
         st.session_state.total_costs["A. Persiapan"] = subtotal_a
         st.metric("Sub-Total Pekerjaan A", f"Rp {subtotal_a:,.2f}")
 
-# Membuat teks berada di tengah menggunakan HTML/CSS
-st.markdown("<h1 style='text-align: center;'>Judul di Tengah</h1>", unsafe_allow_html=True)
+with col_out:
+        # ... kode tabel dan metrik ...
 
-# Membuat gambar di tengah menggunakan div container
-st.markdown(
-    """
-    <div style="display: flex; justify-content: center;">
-        <img src="https://via.placeholder.com/150" width="300">
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+        st.divider()
+        
+        # Membuat sub-kolom di dalam col_out untuk centering gambar
+        sub_col1, sub_col2, sub_col3 = st.columns([1, 3, 1])
+        
+        with sub_col2:
+            try:
+                st.image("gambar/persiapan bowplank.png", caption="Diagram Utama", width=600)
+            except:
+                st.info("Gambar tidak ditemukan")
 
 # --- TAB: DASHBOARD ---
 with tabs[0]:
@@ -103,6 +104,7 @@ with tabs[0]:
         st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
     else:
         st.info("Silakan isi data di Tab Persiapan.")
+
 
 
 
