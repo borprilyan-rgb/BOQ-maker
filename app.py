@@ -19,12 +19,12 @@ if 'total_costs' not in st.session_state:
 tabs = st.tabs(["📊 Dashboard", "A. Persiapan & Bowplank", "B. Gudang Bahan"])
 
 # --- TAB: A. PERSIAPAN & BOWPLANK ---
-with tabs[1]:
-    st.header("Pekerjaan Pembersihan & Bowplank")
+    with tabs[1]:
+        st.header("Pekerjaan Pembersihan & Bowplank")
 
     
-    # Membagi layar: Kiri untuk Input, Kanan untuk Hasil
-    col_in, col_out = st.columns([1, 2])
+        # Membagi layar: Kiri untuk Input, Kanan untuk Hasil
+        col_in, col_out = st.columns([1, 2])
 
    
     
