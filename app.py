@@ -4,7 +4,7 @@ import pandas as pd
 # 1. Page Configuration
 st.set_page_config(layout="wide", page_title="EasyRAB Construction Estimator", page_icon="🏗️")
 
-st.title("🏗️ Aplikasi EasyRAB")
+st.title("RAB Maker")
 st.markdown("Sistem Estimasi Anggaran Biaya Konstruksi")
 
 # 2. State Management for the Summary Report
@@ -95,4 +95,5 @@ with tabs[1]:
 with tabs[2]:
 
     st.info("Tab ini akan kita isi pada langkah berikutnya.")
+
 
