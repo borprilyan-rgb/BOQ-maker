@@ -7,8 +7,7 @@ st.set_page_config(layout="wide", page_title="EasyRAB Estimator")
 st.title("🏗️ Aplikasi EasyRAB")
 st.markdown("Input data langsung di web untuk menghitung estimasi biaya.")
 
-# 2. Inisialisasi State untuk menyimpan total biaya
-    # Inisialisasi awal agar Dashboard punya list kategori meskipun belum diisi
+# 2. Inisialisasi State (Nama kunci harus konsisten agar tidak dobel di Dashboard)
 if 'total_costs' not in st.session_state:
     st.session_state.total_costs = {
         "A. Persiapan & Bowplank": 0.0,
@@ -18,60 +17,59 @@ if 'total_costs' not in st.session_state:
 # 3. Setup Tab
 tabs = st.tabs(["📊 Dashboard", "A. Persiapan & Bowplank", "B. Gudang Bahan"])
 
-# --- TAB: A. PERSIAPAN & BOWPLANK ---
+# --- TAB: DASHBOARD (Index 0) ---
 with tabs[0]:
     st.header("Ringkasan RAB Proyek")
-    if st.session_state.total_costs:
-        for cat, val in st.session_state.total_costs.items():
-            st.write(f"{cat}: **Rp {val:,.2f}**")
-            st.divider()
-            st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
-        else:
-            st.info("Silakan isi data di Tab Persiapan.")
+    
+    # Menampilkan ringkasan dari session_state
+    summary_data = []
+    for cat, val in st.session_state.total_costs.items():
+        summary_data.append({"Kategori": cat, "Biaya (Rp)": val})
+    
+    df_summary = pd.DataFrame(summary_data)
+    
+    # Menampilkan tabel ringkasan
+    st.table(df_summary.style.format({"Biaya (Rp)": "{:,.2f}"}))
+    
+    # Menampilkan Grand Total
+    grand_total = df_summary["Biaya (Rp)"].sum()
+    st.divider()
+    st.subheader(f"GRAND TOTAL: Rp {grand_total:,.2f}")
+
+# --- TAB: A. PERSIAPAN & BOWPLANK (Index 1) ---
 with tabs[1]:
     st.header("Pekerjaan Pembersihan & Bowplank")
-    # Membagi layar: Kiri untuk Input, Kanan untuk Hasil
+    
     col_in, col_out = st.columns([1, 2])
-
-   
     
     with col_in:
         st.subheader("📍 Input Parameter")
-        # Mengambil koordinat input dari struktur Excel Anda
-        p_lahan = st.number_input("Panjang Lahan (m1)", value=6.0, step=0.5) # Excel Row 7, Col E
-        l_lahan = st.number_input("Lebar Lahan (m1)", value=8.0, step=0.5)   # Excel Row 8, Col E
-        c_bebas = st.number_input("Jarak Bebas Plank (m1)", value=1.5, step=0.1) # Excel Row 10, Col E
-        h_patok = st.number_input("Tinggi Patok (m1)", value=1.5, step=0.1)     # Excel Row 11, Col E
-        r_jarak = st.number_input("Jarak Antar Patok (m1)", value=1.0, step=0.1) # Excel Row 9, Col E
-        x_koefisien = st.number_input("Koefiesien Volume", value=1.0, step=0.1)
+        p_lahan = st.number_input("Panjang Lahan (m1)", value=6.0, step=0.5)
+        l_lahan = st.number_input("Lebar Lahan (m1)", value=8.0, step=0.5)
+        c_bebas = st.number_input("Jarak Bebas Plank (m1)", value=1.5, step=0.1)
+        h_patok = st.number_input("Tinggi Patok (m1)", value=1.5, step=0.1)
+        r_jarak = st.number_input("Jarak Antar Patok (m1)", value=1.0, step=0.1)
+        x_koefisien = st.number_input("Koefisien Volume", value=1.0, step=0.1)
         
         st.subheader("Fasilitas Kerja")
-        gudang_m2 = st.number_input("Luas Gudang Bahan (m2)", value=9.0) # Excel Row 7, Col I
-        direksi_m2 = st.number_input("Luas Direksi Keet (m2)", value=6.0) # Excel Row 8, Col I
+        gudang_m2 = st.number_input("Luas Gudang Bahan (m2)", value=9.0)
+        direksi_m2 = st.number_input("Luas Direksi Keet (m2)", value=6.0)
 
     with col_out:
-        # --- LOGIKA PERHITUNGAN (Mapping dari Rumus Excel Anda) ---
-        # A1: Luas Pembersihan = P * L
+        # Perhitungan
         luas_pembersihan = p_lahan * l_lahan
-        
-        # A2: Keliling Bowplank = 2 * ((P + L + 2*C) * K
-        # (Menyesuaikan logika konstruksi standar bowplank)
-        keliling_bowplank = 2 * ((p_lahan + l_lahan + (2*c_bebas) * x_koefisien))
-        
-        # A3: Fasilitas = Gudang + Direksi
+        keliling_bowplank = 2 * (p_lahan + l_lahan + (2 * c_bebas)) * x_koefisien
         luas_fasilitas = gudang_m2 + direksi_m2
         
-        # A4-A6: Volume Material (Menggunakan koefisien dari file Excel Anda)
-        vol_patok = (keliling_bowplank / r_jarak + 1) * (h_patok + 0.3) *1.05
-        vol_papan = keliling_bowplank * 1.05 # Waste factor 5%
-        vol_skor  = (keliling_bowplank / r_jarak /2 ) * (h_patok * 2 * 0.5) *1.05
+        vol_patok = (keliling_bowplank / r_jarak + 1) * (h_patok + 0.3) * 1.05
+        vol_papan = keliling_bowplank * 1.05
+        vol_skor  = (keliling_bowplank / r_jarak / 2) * (h_patok * 2 * 0.5) * 1.05
 
-        # Daftar Harga Satuan (Bisa dihubungkan ke Sheet "Daftar Harga" nanti)
         data_hasil = [
             {"ID": "A1", "Uraian": "Luas Pembersihan Lahan", "Vol": luas_pembersihan, "Sat": "m2", "Harga": 1200},
             {"ID": "A2", "Uraian": "Keliling Bowplank", "Vol": keliling_bowplank, "Sat": "m1", "Harga": 85000},
             {"ID": "A3", "Uraian": "Luas Direksi Ket dan Gudang Bahan", "Vol": luas_fasilitas, "Sat": "m2", "Harga": 23000},
-            {"ID": "A4", "Uraian": "Volume Kebutuhan Patok bowplank", "Vol": vol_patok, "Sat": "m1", "Harga": 1200},
+            {"ID": "A4", "Uraian": "Volume Kebutuhan Patok bowplank", "Vol": vol_patok, "Sat": "m1", "Harga": 12000},
             {"ID": "A5", "Uraian": "Volume Kebutuhan papan bowplank", "Vol": vol_papan, "Sat": "m1", "Harga": 15000},
             {"ID": "A6", "Uraian": "Volume Kebutuhan Balok Skor bowplank", "Vol": vol_skor, "Sat": "m1", "Harga": 8500},
         ]
@@ -86,40 +84,24 @@ with tabs[1]:
             "Total (Rp)": "{:,.2f}"
         }), use_container_width=True, hide_index=True)
         
-        # Simpan ke Dashboard
+        # Simpan ke Dashboard (Pastikan KEY sama persis dengan inisialisasi)
         subtotal_a = df_res["Total (Rp)"].sum()
         st.session_state.total_costs["A. Persiapan & Bowplank"] = subtotal_a
         st.metric("Sub-Total Pekerjaan A", f"Rp {subtotal_a:,.2f}")
 
-with col_out:
-        # ... kode tabel dan metrik ...
-
+        # Gambar di bawah hasil (Centered)
         st.divider()
-        
-        # Membuat sub-kolom di dalam col_out untuk centering gambar
         sub_col1, sub_col2, sub_col3 = st.columns([1, 3, 1])
-        
         with sub_col2:
             try:
                 st.image("gambar/persiapan bowplank.png", caption="Diagram Utama", width=600)
             except:
-                st.info("Gambar tidak ditemukan")
+                st.info("Gambar 'gambar/persiapan bowplank.png' tidak ditemukan.")
 
-# --- TAB: DASHBOARD ---
-
-with tabs[1]:
-    # ... (kode input dan perhitungan Anda) ...
-
-    # Pastikan bagian ini ada untuk melempar nilai ke Dashboard
-    subtotal_a = df_res["Total (Rp)"].sum()
-    st.session_state.total_costs["A. Persiapan & Bowplank"] = subtotal_a
-    st.metric("Sub-Total Pekerjaan A", f"Rp {subtotal_a:,.2f}")
-
-# --- TAB: B. GUDANG BAHAN ---
+# --- TAB: B. GUDANG BAHAN (Index 2) ---
 with tabs[2]:
     st.header("Pekerjaan Pembuatan Gudang Bahan")
 
-    # Membagi layar: Kiri untuk Input, Kanan untuk Hasil
     col_in_b, col_out_b = st.columns([1, 2])
 
     with col_in_b:
@@ -137,18 +119,10 @@ with tabs[2]:
         x_koef_b = st.number_input("Koefisien Volume Gudang", value=1.0, step=0.1)
 
     with col_out_b:
-        # --- LOGIKA PERHITUNGAN (Mapping dari Rumus Excel EasyRAB) ---
+        # Logika Perhitungan
         keliling_b = 2 * (p_gudang + l_gudang)
-        # Sisi miring atap (Pythagoras sederhana atau sesuai template)
-        s_miring = 2.58 # Mengacu pada data teknis di file Anda
+        s_miring = 2.58 
         
-        # Volume Material (B1 - B8) - Rumus disederhanakan sesuai koefisien Excel
-        vol_balok_510 = (keliling_b * t_dinding * 0.01) + 0.15 # B1
-        vol_balok_46  = (p_gudang * l_gudang * 0.004) # B2
-        vol_triplex   = (keliling_b * t_dinding) / 1.2 # Estimasi jumlah lembar B6
-        vol_seng      = (p_gudang * s_miring * 2) / 0.8 # B7
-
-        # Daftar Hasil Material Gudang
         data_gudang = [
             {"ID": "B1", "Uraian": "Balok Kayu 5/10 (Rangka Utama)", "Vol": 0.28, "Sat": "m3", "Harga": 2800000},
             {"ID": "B5", "Uraian": "Papan Kayu 2/20", "Vol": 0.17, "Sat": "m3", "Harga": 3200000},
@@ -173,49 +147,11 @@ with tabs[2]:
         st.session_state.total_costs["B. Gudang Bahan"] = subtotal_b
         st.metric("Sub-Total Pekerjaan B", f"Rp {subtotal_b:,.2f}")
 
-        with tabs[2]:
-            # ... (kode input dan perhitungan Anda) ...
-
-            # Pastikan bagian ini juga memperbarui state
-            subtotal_b = df_gudang["Total (Rp)"].sum()
-            st.session_state.total_costs["B. Gudang Bahan"] = subtotal_b
-            st.metric("Sub-Total Pekerjaan B", f"Rp {subtotal_b:,.2f}")
-
-        # --- GAMBAR ILUSTRASI GUDANG ---
+        # Gambar di bawah hasil (Centered)
         st.divider()
-        try:
-            # Pastikan Anda mengunggah file gambar skema gudang ke folder 'gambar'
-            st.image("gambar/gudang bahan.png", caption="Skema Gudang Bahan & Direksi Keet", width=600)
-        except:
-            st.info("💡 Tips: Taruh gambar 'gudang bahan.png' di folder 'gambar' untuk panduan visual.")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        sub_col1_b, sub_col2_b, sub_col3_b = st.columns([1, 3, 1])
+        with sub_col2_b:
+            try:
+                st.image("gambar/gudang bahan.png", caption="Skema Gudang Bahan", width=600)
+            except:
+                st.info("Gambar 'gambar/gudang bahan.png' tidak ditemukan.")
