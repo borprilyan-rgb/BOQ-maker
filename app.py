@@ -81,7 +81,7 @@ with tabs[1]:
         
         # Simpan ke Dashboard
         subtotal_a = df_res["Total (Rp)"].sum()
-        st.session_state.total_costs["A. Persiapan"] = subtotal_a
+        st.session_state.total_costs["A. Persiapan & Bowplank"] = subtotal_a
         st.metric("Sub-Total Pekerjaan A", f"Rp {subtotal_a:,.2f}")
 
 with col_out:
@@ -190,6 +190,7 @@ with tabs[2]:
             st.image("gambar/gudang bahan.png", caption="Skema Gudang Bahan & Direksi Keet", width=600)
         except:
             st.info("💡 Tips: Taruh gambar 'gudang bahan.png' di folder 'gambar' untuk panduan visual.")
+
 
 
 
