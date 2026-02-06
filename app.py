@@ -32,8 +32,8 @@ with tabs[1]:
     st.header("Pekerjaan Pembersihan & Bowplank")
 
     
-        # Membagi layar: Kiri untuk Input, Kanan untuk Hasil
-        col_in, col_out = st.columns([1, 2])
+    # Membagi layar: Kiri untuk Input, Kanan untuk Hasil
+    col_in, col_out = st.columns([1, 2])
 
    
     
@@ -190,6 +190,7 @@ with tabs[2]:
             st.image("gambar/gudang bahan.png", caption="Skema Gudang Bahan & Direksi Keet", width=600)
         except:
             st.info("💡 Tips: Taruh gambar 'gudang bahan.png' di folder 'gambar' untuk panduan visual.")
+
 
 
 
