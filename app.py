@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # 1. Page Configuration
-st.set_page_config(layout="wide", page_title="EasyRAB Construction Estimator")
+st.set_page_config(layout="wide", page_title="EasyRAB Construction Estimator", layout="wide", page_icon="🌱")
 
 st.title("🏗️ Aplikasi EasyRAB")
 st.markdown("Sistem Estimasi Anggaran Biaya Konstruksi")
@@ -93,4 +93,5 @@ with tabs[1]:
 
 # --- TAB: B. GUDANG BAHAN (Placeholder) ---
 with tabs[2]:
+
     st.info("Tab ini akan kita isi pada langkah berikutnya.")
