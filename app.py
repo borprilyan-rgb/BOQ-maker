@@ -1,84 +1,88 @@
 import streamlit as st
 import pandas as pd
 
+# 1. Konfigurasi Halaman
 st.set_page_config(layout="wide", page_title="EasyRAB Estimator")
 
-# 1. Google Sheet XLSX URL
-SHEET_ID = "1wpIZ-RYxdgn3kuKT7lsi7ZUEW_GAl3cGk1HOpVNmSlI"
-EXCEL_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=xlsx"
-
 st.title("🏗️ Aplikasi EasyRAB")
+st.markdown("Input data langsung di web untuk menghitung estimasi biaya.")
 
+# 2. Inisialisasi State untuk menyimpan total biaya
 if 'total_costs' not in st.session_state:
     st.session_state.total_costs = {}
 
-@st.cache_data(ttl=60)
-def load_data(sheet_name):
-    return pd.read_excel(EXCEL_URL, sheet_name=sheet_name)
-
+# 3. Setup Tab
 tabs = st.tabs(["📊 Dashboard", "A. Persiapan & Bowplank", "B. Gudang Bahan"])
 
 # --- TAB: A. PERSIAPAN & BOWPLANK ---
 with tabs[1]:
     st.header("Pekerjaan Pembersihan & Bowplank")
     
-    try:
-        # Load the specific sheet
-        df = load_data("Persiapan & Bowplank")
+    # Membagi layar: Kiri untuk Input, Kanan untuk Hasil
+    col_in, col_out = st.columns([1, 2])
+    
+    with col_in:
+        st.subheader("📍 Input Parameter")
+        # Mengambil koordinat input dari struktur Excel Anda
+        p_lahan = st.number_input("Panjang Lahan (m1)", value=6.0, step=0.5) # Excel Row 7, Col E
+        l_lahan = st.number_input("Lebar Lahan (m1)", value=8.0, step=0.5)   # Excel Row 8, Col E
+        c_bebas = st.number_input("Jarak Bebas Plank (m1)", value=1.5, step=0.1) # Excel Row 10, Col E
+        h_patok = st.number_input("Tinggi Patok (m1)", value=1.5, step=0.1)     # Excel Row 11, Col E
+        r_jarak = st.number_input("Jarak Antar Patok (m1)", value=1.0, step=0.1) # Excel Row 9, Col E
         
-        col_in, col_out = st.columns([1, 2])
+        st.subheader("Fasilitas Kerja")
+        gudang_m2 = st.number_input("Luas Gudang Bahan (m2)", value=9.0) # Excel Row 7, Col I
+        direksi_m2 = st.number_input("Luas Direksi Keet (m2)", value=6.0) # Excel Row 8, Col I
+
+    with col_out:
+        # --- LOGIKA PERHITUNGAN (Mapping dari Rumus Excel Anda) ---
+        # A1: Luas Pembersihan = P * L
+        luas_pembersihan = p_lahan * l_lahan
         
-        with col_in:
-            st.subheader("📍 Parameter dari Sheet")
-            # We "locate" the specific rows for P and L to show the user what's in the Excel
-            # Mapping based on your file: Column 3 is 'Unnamed: 3', Column 4 is 'Unnamed: 4'
-            p_val = df.iloc[4, 4] # Row 6 (index 4), Col E (index 4)
-            l_val = df.iloc[5, 4] # Row 7 (index 5), Col E (index 4)
-            
-            st.write(f"**Panjang Lahan:** {p_val} m1")
-            st.write(f"**Lebar Lahan:** {l_val} m1")
-            st.info("Edit nilai-nilai ini di Google Sheets untuk memperbarui perhitungan.")
+        # A2: Keliling Bowplank = 2 * ((P + 2*C) + (L + 2*C)) 
+        # (Menyesuaikan logika konstruksi standar bowplank)
+        keliling_bowplank = 2 * ((p_lahan + (2*c_bebas)) + (l_lahan + (2*c_bebas)))
+        
+        # A3: Fasilitas = Gudang + Direksi
+        luas_fasilitas = gudang_m2 + direksi_m2
+        
+        # A4-A6: Volume Material (Menggunakan koefisien dari file Excel Anda)
+        vol_patok = (keliling_bowplank / r_jarak) * h_patok
+        vol_papan = keliling_bowplank * 1.05 # Waste factor 5%
+        vol_skor  = (keliling_bowplank / r_jarak) * (h_patok * 0.75)
 
-        with col_out:
-            st.subheader("📋 Hasil Tabel Volume (Live)")
-            
-            # Filter rows that have ID 'A1' to 'A6' in the 3rd column (index 2)
-            # This ensures we only grab the 'Result' rows
-            mask = df.iloc[:, 2].str.startswith('A', na=False)
-            df_result = df[mask].copy()
-            
-            # Select columns: ID, Description, Unit Price, Volume, Unit
-            # Matching your EasyRAB layout
-            clean_df = df_result.iloc[:, [2, 3, 7, 8, 9]]
-            clean_df.columns = ['ID', 'Uraian', 'Harga', 'Vol', 'Sat']
-            
-            # Convert to numeric for math
-            clean_df['Harga'] = pd.to_numeric(clean_df['Harga'], errors='coerce')
-            clean_df['Vol'] = pd.to_numeric(clean_df['Vol'], errors='coerce')
-            clean_df['Total (Rp)'] = clean_df['Harga'] * clean_df['Vol']
-            
-            st.dataframe(clean_df.dropna(subset=['ID']).style.format({
-                "Harga": "{:,.0f}",
-                "Vol": "{:.2f}",
-                "Total (Rp)": "{:,.2f}"
-            }), use_container_width=True, hide_index=True)
-            
-            # Update Grand Total
-            subtotal_a = clean_df['Total (Rp)'].sum()
-            st.session_state.total_costs["A. Persiapan"] = subtotal_a
-            st.metric("Sub-Total Kategori A", f"Rp {subtotal_a:,.2f}")
-
-    except Exception as e:
-        st.error(f"Gagal memuat Sheet. Pastikan nama sheet 'Persiapan & Bowplank' benar. Error: {e}")
+        # Daftar Harga Satuan (Bisa dihubungkan ke Sheet "Daftar Harga" nanti)
+        data_hasil = [
+            {"ID": "A1", "Uraian": "Luas Pembersihan Lahan", "Vol": luas_pembersihan, "Sat": "m2", "Harga": 1200},
+            {"ID": "A2", "Uraian": "Keliling Bowplank", "Vol": keliling_bowplank, "Sat": "m1", "Harga": 85000},
+            {"ID": "A3", "Uraian": "Luas Direksi Ket dan Gudang Bahan", "Vol": luas_fasilitas, "Sat": "m2", "Harga": 23000},
+            {"ID": "A4", "Uraian": "Volume Kebutuhan Patok bowplank", "Vol": vol_patok, "Sat": "m1", "Harga": 15000},
+            {"ID": "A5", "Uraian": "Volume Kebutuhan papan bowplank", "Vol": vol_papan, "Sat": "m1", "Harga": 15000},
+            {"ID": "A6", "Uraian": "Volume Kebutuhan Balok Skor bowplank", "Vol": vol_skor, "Sat": "m1", "Harga": 8500},
+        ]
+        
+        df_res = pd.DataFrame(data_hasil)
+        df_res["Total (Rp)"] = df_res["Vol"] * df_res["Harga"]
+        
+        st.subheader("📋 Tabel Hasil Perhitungan")
+        st.dataframe(df_res.style.format({
+            "Vol": "{:.2f}",
+            "Harga": "{:,.0f}",
+            "Total (Rp)": "{:,.2f}"
+        }), use_container_width=True, hide_index=True)
+        
+        # Simpan ke Dashboard
+        subtotal_a = df_res["Total (Rp)"].sum()
+        st.session_state.total_costs["A. Persiapan"] = subtotal_a
+        st.metric("Sub-Total Pekerjaan A", f"Rp {subtotal_a:,.2f}")
 
 # --- TAB: DASHBOARD ---
 with tabs[0]:
-    st.header("Ringkasan RAB")
+    st.header("Ringkasan RAB Proyek")
     if st.session_state.total_costs:
         for cat, val in st.session_state.total_costs.items():
             st.write(f"{cat}: **Rp {val:,.2f}**")
         st.divider()
-        grand_total = sum(st.session_state.total_costs.values())
-        st.subheader(f"TOTAL ESTIMASI: Rp {grand_total:,.2f}")
+        st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
     else:
-        st.info("Data belum tersedia.")
+        st.info("Silakan isi data di Tab Persiapan.")
