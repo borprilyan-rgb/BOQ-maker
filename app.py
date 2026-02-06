@@ -171,13 +171,13 @@ with tabs[2]:
         st.session_state.total_costs["B. Gudang Bahan"] = subtotal_b
         st.metric("Sub-Total Pekerjaan B", f"Rp {subtotal_b:,.2f}")
 
-            with tabs[2]:
-                # ... (kode input dan perhitungan Anda) ...
+        with tabs[2]:
+            # ... (kode input dan perhitungan Anda) ...
 
-                # Pastikan bagian ini juga memperbarui state
-                subtotal_b = df_gudang["Total (Rp)"].sum()
-                st.session_state.total_costs["B. Gudang Bahan"] = subtotal_b
-                st.metric("Sub-Total Pekerjaan B", f"Rp {subtotal_b:,.2f}")
+            # Pastikan bagian ini juga memperbarui state
+            subtotal_b = df_gudang["Total (Rp)"].sum()
+            st.session_state.total_costs["B. Gudang Bahan"] = subtotal_b
+            st.metric("Sub-Total Pekerjaan B", f"Rp {subtotal_b:,.2f}")
 
         # --- GAMBAR ILUSTRASI GUDANG ---
         st.divider()
@@ -186,6 +186,7 @@ with tabs[2]:
             st.image("gambar/gudang bahan.png", caption="Skema Gudang Bahan & Direksi Keet", width=600)
         except:
             st.info("💡 Tips: Taruh gambar 'gudang bahan.png' di folder 'gambar' untuk panduan visual.")
+
 
 
 
