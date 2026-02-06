@@ -18,12 +18,6 @@ tabs = st.tabs(["📊 Dashboard", "A. Persiapan & Bowplank", "B. Gudang Bahan"])
 with tabs[1]:
     st.header("Pekerjaan Pembersihan & Bowplank")
 
-    # Menampilkan gambar dari folder assets
-    # Pastikan file 'persiapan bowplank.png' ada di folder 'assets' di repo Anda
-    try:
-        st.image("gambar/persiapan bowplank.png", caption="Diagram Ilustrasi Bowplank", use_container_width=True)
-    except:
-        st.warning("⚠️ Gambar 'gambar/persiapan bowplank.png' tidak ditemukan di repo.")
     
     # Membagi layar: Kiri untuk Input, Kanan untuk Hasil
     col_in, col_out = st.columns([1, 2])
@@ -86,6 +80,14 @@ with tabs[1]:
         st.session_state.total_costs["A. Persiapan"] = subtotal_a
         st.metric("Sub-Total Pekerjaan A", f"Rp {subtotal_a:,.2f}")
 
+# --- POSISI GAMBAR DI BAWAH RESULT ---
+        st.divider() # Garis pemisah agar rapi
+        try:
+            # Menggunakan folder 'gambar' sesuai request Anda
+            st.image("gambar/persiapan bowplank.png", caption="Diagram Ilustrasi Bowplank", use_container_width=True)
+        except:
+            st.info("💡 Tips: Pastikan file 'persiapan bowplank.png' sudah diunggah ke folder 'gambar' di repository Anda.")
+
 # --- TAB: DASHBOARD ---
 with tabs[0]:
     st.header("Ringkasan RAB Proyek")
@@ -96,6 +98,7 @@ with tabs[0]:
         st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
     else:
         st.info("Silakan isi data di Tab Persiapan.")
+
 
 
 
