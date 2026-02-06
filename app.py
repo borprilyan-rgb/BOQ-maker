@@ -8,11 +8,11 @@ st.title("🏗️ Aplikasi EasyRAB")
 st.markdown("Input data langsung di web untuk menghitung estimasi biaya.")
 
 # 2. Inisialisasi State untuk menyimpan total biaya
-# Inisialisasi awal agar Dashboard punya list kategori meskipun belum diisi
-if 'total_costs' not in st.session_state:
-    st.session_state.total_costs = {
-        "A. Persiapan & Bowplank": 0.0,
-        "B. Gudang Bahan": 0.0
+    # Inisialisasi awal agar Dashboard punya list kategori meskipun belum diisi
+    if 'total_costs' not in st.session_state:
+        st.session_state.total_costs = {
+            "A. Persiapan & Bowplank": 0.0,
+            "B. Gudang Bahan": 0.0
 
 # 3. Setup Tab
 tabs = st.tabs(["📊 Dashboard", "A. Persiapan & Bowplank", "B. Gudang Bahan"])
@@ -189,6 +189,7 @@ with tabs[2]:
             st.image("gambar/gudang bahan.png", caption="Skema Gudang Bahan & Direksi Keet", width=600)
         except:
             st.info("💡 Tips: Taruh gambar 'gudang bahan.png' di folder 'gambar' untuk panduan visual.")
+
 
 
 
