@@ -123,3 +123,74 @@ with tabs[2]:
         subtotal_b = df_b["Total (Rp)"].sum()
         st.session_state.total_costs["B. Gudang Bahan"] = subtotal_b
         st.metric("Sub-Total Pekerjaan B", f"Rp {subtotal_b:,.2f}")
+
+# --- TAB: C. PONDASI BATU KALI ---
+with tabs[3]:
+    st.header("Pekerjaan Pondasi Batu Kali")
+    
+    col_in_c, col_out_c = st.columns([1, 2])
+    
+    with col_in_c:
+        st.subheader("📍 Input Dimensi Pondasi")
+        # Parameter Utama
+        p_pondasi = st.number_input("Panjang Pondasi (P), m1", value=72.0, step=1.0)
+        a_atas = st.number_input("Lebar Atas Pondasi (a), m1", value=0.3, step=0.1)
+        b_bawah = st.number_input("Lebar Bawah Pondasi (b), m1", value=0.6, step=0.1)
+        h_batu = st.number_input("Tinggi Pasangan Batu (h1), m1", value=0.5, step=0.1)
+        
+        st.divider()
+        st.subheader("Detail Galian & Urugan")
+        c_lebar_galian = st.number_input("Lebar Galian Tanah (c), m1", value=0.7, step=0.1)
+        h_galian = st.number_input("Kedalaman Galian (h4), m1", value=0.6, step=0.1)
+        t_pasir = st.number_input("Tebal Urugan Pasir (h3), m1", value=0.05, step=0.01)
+        t_kosong = st.number_input("Tinggi Batu Kosong/Anstamping (h2), m1", value=0.05, step=0.01)
+        
+        x_koef_c = st.number_input("Koefisien Volume Pondasi", value=1.0, step=0.1)
+
+    with col_out_c:
+        # --- LOGIKA PERHITUNGAN (Mapping EasyRAB) ---
+        # C1: Galian Tanah = Lebar Galian * Dalam Galian * Panjang
+        vol_galian = c_lebar_galian * h_galian * p_pondasi * x_koef_c
+        
+        # C2: Urugan Pasir = Lebar Galian * Tebal Pasir * Panjang
+        vol_pasir = c_lebar_galian * t_pasir * p_pondasi * x_koef_c
+        
+        # C3: Batu Kosong = Lebar Galian * Tinggi Batu Kosong * Panjang
+        vol_anstamping = c_lebar_galian * t_kosong * p_pondasi * x_koef_c
+        
+        # C4: Pasangan Batu Kali = Luas Trapesium * Panjang
+        # Rumus: ((Atas + Bawah) / 2) * Tinggi * Panjang
+        vol_pas_batu = ((a_atas + b_bawah) / 2) * h_batu * p_pondasi * x_koef_c
+
+        # Data Hasil untuk Tabel
+        data_pondasi = [
+            {"ID": "C1", "Uraian": "Volume Galian Tanah Pondasi", "Vol": vol_galian, "Sat": "m3", "Harga": 12000},
+            {"ID": "C2", "Uraian": "Volume Urugan Pasir", "Vol": vol_pasir, "Sat": "m3", "Harga": 250000},
+            {"ID": "C3", "Uraian": "Volume Pasangan Batu Kosong (Anstamping)", "Vol": vol_anstamping, "Sat": "m3", "Harga": 250000},
+            {"ID": "C4", "Uraian": "Volume Pasangan Batu Kali 1:4", "Vol": vol_pas_batu, "Sat": "m3", "Harga": 250000},
+        ]
+        
+        df_pondasi = pd.DataFrame(data_pondasi)
+        df_pondasi["Total (Rp)"] = df_pondasi["Vol"] * df_pondasi["Harga"]
+        
+        st.subheader("📋 Tabel Hasil Perhitungan Pondasi")
+        st.dataframe(df_pondasi.style.format({
+            "Vol": "{:.2f}",
+            "Harga": "{:,.0f}",
+            "Total (Rp)": "{:,.2f}"
+        }), use_container_width=True, hide_index=True)
+        
+        # Update Dashboard
+        subtotal_c = df_pondasi["Total (Rp)"].sum()
+        st.session_state.total_costs["C. Pondasi Batu Kali"] = subtotal_c
+        st.metric("Sub-Total Pekerjaan C", f"Rp {subtotal_c:,.2f}")
+
+        # Menampilkan Gambar Skema Pondasi
+        st.divider()
+        sub_col1, sub_col2, sub_col3 = st.columns([1, 3, 1])
+        with sub_col2:
+            try:
+                # Pastikan file ini ada di folder 'gambar'
+                st.image("gambar/pondasi batu kali.png", caption="Detail Penampang Pondasi Batu Kali", width=600)
+            except:
+                st.info("💡 Tip: Unggah gambar 'pondasi batu kali.png' ke folder 'gambar' untuk referensi visual.")
