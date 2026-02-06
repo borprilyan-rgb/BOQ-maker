@@ -29,6 +29,7 @@ with tabs[1]:
         c_bebas = st.number_input("Jarak Bebas Plank (m1)", value=1.5, step=0.1) # Excel Row 10, Col E
         h_patok = st.number_input("Tinggi Patok (m1)", value=1.5, step=0.1)     # Excel Row 11, Col E
         r_jarak = st.number_input("Jarak Antar Patok (m1)", value=1.0, step=0.1) # Excel Row 9, Col E
+        k_volume = st.number_input("Koefiesien Volume", value=1.0, step=0.1)
         
         st.subheader("Fasilitas Kerja")
         gudang_m2 = st.number_input("Luas Gudang Bahan (m2)", value=9.0) # Excel Row 7, Col I
@@ -39,9 +40,9 @@ with tabs[1]:
         # A1: Luas Pembersihan = P * L
         luas_pembersihan = p_lahan * l_lahan
         
-        # A2: Keliling Bowplank = 2 * ((P + 2*C) + (L + 2*C)) 
+        # A2: Keliling Bowplank = 2 * ((P + L + 2*C) * K
         # (Menyesuaikan logika konstruksi standar bowplank)
-        keliling_bowplank = 2 * ((p_lahan + (2*c_bebas)) + (l_lahan + (2*c_bebas)))
+        keliling_bowplank = 2 * ((p_lahan + l_lahan + (2*c_bebas) * k_volume)
         
         # A3: Fasilitas = Gudang + Direksi
         luas_fasilitas = gudang_m2 + direksi_m2
@@ -86,3 +87,4 @@ with tabs[0]:
         st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
     else:
         st.info("Silakan isi data di Tab Persiapan.")
+
