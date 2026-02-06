@@ -7,7 +7,7 @@ st.title("🏗️ EasyRAB: Live Google Sheets Sync")
 
 # URL CSV dari Google Sheets Anda
 # Pastikan spreadsheet sudah di-"Publish to Web" sebagai CSV
-CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTW4nrVpk5u893A6ZCLPg_BC1yE6Xn2NYLVZtG0N4B4wVqukaUfrljPSeWQgTQhX2f07FczM8-Bb0g9/pubhtml?gid=489387629&single=true"
+CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTW4nrVpk5u893A6ZCLPg_BC1yE6Xn2NYLVZtG0N4B4wVqukaUfrljPSeWQgTQhX2f07FczM8-Bb0g9/pub?output=csv"
 
 @st.cache_data(ttl=60)  # Refresh data setiap 60 detik
 def load_data(url):
@@ -57,4 +57,3 @@ try:
 except Exception as e:
     st.error(f"Gagal memuat data. Pastikan link Google Sheets sudah di-'Publish to Web'.")
     st.write(f"Detail Error: {e}")
-
