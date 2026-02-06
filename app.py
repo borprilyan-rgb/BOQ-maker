@@ -21,9 +21,9 @@ with tabs[1]:
     # Menampilkan gambar dari folder assets
     # Pastikan file 'persiapan bowplank.png' ada di folder 'assets' di repo Anda
     try:
-        st.image("assets/persiapan bowplank.png", caption="Diagram Ilustrasi Bowplank", use_container_width=True)
+        st.image("gambar/persiapan bowplank.png", caption="Diagram Ilustrasi Bowplank", use_container_width=True)
     except:
-        st.warning("⚠️ Gambar 'assets/persiapan bowplank.png' tidak ditemukan di repo.")
+        st.warning("⚠️ Gambar 'gambar/persiapan bowplank.png' tidak ditemukan di repo.")
     
     # Membagi layar: Kiri untuk Input, Kanan untuk Hasil
     col_in, col_out = st.columns([1, 2])
@@ -96,6 +96,7 @@ with tabs[0]:
         st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
     else:
         st.info("Silakan isi data di Tab Persiapan.")
+
 
 
 
