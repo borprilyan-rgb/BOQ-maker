@@ -5,7 +5,7 @@ st.set_page_config(layout="wide", page_title="EasyRAB Pro Sync")
 
 # Masukkan ID file Google Sheets Anda di sini
 SHEET_ID = "1wpIZ-RYxdgn3kuKT7lsi7ZUEW_GAl3cGk1HOpVNmSlI"
-EXCEL_URL = f"https://docs.google.com/spreadsheets/d/1wpIZ-RYxdgn3kuKT7lsi7ZUEW_GAl3cGk1HOpVNmSlI/export?format=xlsx"
+EXCEL_URL = f"https://docs.google.com/spreadsheets/d/1wpIZ-RYxdgn3kuKT7lsi7ZUEW_GAl3cGk1HOpVNmSlI/edit?usp=sharing"
 
 st.title("🏗️ EasyRAB: Excel Multi-Sheet Loader")
 st.info("Aplikasi ini membaca langsung tiap sheet dari file Google Sheets Anda.")
@@ -55,3 +55,4 @@ st.sidebar.markdown("---")
 if st.sidebar.button("🔄 Refresh Data"):
     st.cache_data.clear()
     st.rerun()
+
