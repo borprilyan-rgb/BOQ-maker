@@ -57,5 +57,3 @@ try:
 except Exception as e:
     st.error(f"Gagal memuat data. Pastikan link Google Sheets sudah di-'Publish to Web'.")
     st.write(f"Detail Error: {e}")
-
-
