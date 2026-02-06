@@ -107,13 +107,13 @@ with col_out:
 
 # --- TAB: DASHBOARD ---
 
-    with tabs[1]:
-        # ... (kode input dan perhitungan Anda) ...
+with tabs[1]:
+    # ... (kode input dan perhitungan Anda) ...
 
-        # Pastikan bagian ini ada untuk melempar nilai ke Dashboard
-        subtotal_a = df_res["Total (Rp)"].sum()
-        st.session_state.total_costs["A. Persiapan & Bowplank"] = subtotal_a
-        st.metric("Sub-Total Pekerjaan A", f"Rp {subtotal_a:,.2f}")
+    # Pastikan bagian ini ada untuk melempar nilai ke Dashboard
+    subtotal_a = df_res["Total (Rp)"].sum()
+    st.session_state.total_costs["A. Persiapan & Bowplank"] = subtotal_a
+    st.metric("Sub-Total Pekerjaan A", f"Rp {subtotal_a:,.2f}")
 
 # --- TAB: B. GUDANG BAHAN ---
 with tabs[2]:
@@ -188,6 +188,7 @@ with tabs[2]:
             st.image("gambar/gudang bahan.png", caption="Skema Gudang Bahan & Direksi Keet", width=600)
         except:
             st.info("💡 Tips: Taruh gambar 'gudang bahan.png' di folder 'gambar' untuk panduan visual.")
+
 
 
 
