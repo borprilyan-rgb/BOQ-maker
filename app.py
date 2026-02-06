@@ -80,13 +80,18 @@ with tabs[1]:
         st.session_state.total_costs["A. Persiapan"] = subtotal_a
         st.metric("Sub-Total Pekerjaan A", f"Rp {subtotal_a:,.2f}")
 
-# --- POSISI GAMBAR DI BAWAH RESULT ---
-        st.divider() # Garis pemisah agar rapi
+# --- BAGIAN GAMBAR DENGAN UKURAN 600 PX ---
+        st.divider() 
         try:
-            # Menggunakan folder 'gambar' sesuai request Anda
-            st.image("gambar/persiapan bowplank.png", caption="Diagram Ilustrasi Bowplank", width=600, use_container_width=True)
+            # Menggunakan parameter width=600 untuk resize
+            # use_container_width diubah menjadi False agar width manual berfungsi
+            st.image(
+                "gambar/persiapan bowplank.png", 
+                caption="Diagram Ilustrasi Bowplank", 
+                width=600
+            )
         except:
-            st.info("💡 Tips: Pastikan file 'persiapan bowplank.png' sudah diunggah ke folder 'gambar' di repository Anda.")
+            st.info("💡 Tips: Pastikan file 'persiapan bowplank.png' ada di folder 'gambar'.")
 
 # --- TAB: DASHBOARD ---
 with tabs[0]:
@@ -98,6 +103,7 @@ with tabs[0]:
         st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
     else:
         st.info("Silakan isi data di Tab Persiapan.")
+
 
 
 
