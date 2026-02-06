@@ -29,7 +29,7 @@ with tabs[1]:
         c_bebas = st.number_input("Jarak Bebas Plank (m1)", value=1.5, step=0.1) # Excel Row 10, Col E
         h_patok = st.number_input("Tinggi Patok (m1)", value=1.5, step=0.1)     # Excel Row 11, Col E
         r_jarak = st.number_input("Jarak Antar Patok (m1)", value=1.0, step=0.1) # Excel Row 9, Col E
-        k_volume = st.number_input("Koefiesien Volume", value=1.0, step=0.1)
+        x_koefisien = st.number_input("Koefiesien Volume", value=1.0, step=0.1)
         
         st.subheader("Fasilitas Kerja")
         gudang_m2 = st.number_input("Luas Gudang Bahan (m2)", value=9.0) # Excel Row 7, Col I
@@ -42,22 +42,22 @@ with tabs[1]:
         
         # A2: Keliling Bowplank = 2 * ((P + L + 2*C) * K
         # (Menyesuaikan logika konstruksi standar bowplank)
-        keliling_bowplank = 2 * ((p_lahan + l_lahan + (2*c_bebas) * k_volume))
+        keliling_bowplank = 2 * ((p_lahan + l_lahan + (2*c_bebas) * x_koefisien))
         
         # A3: Fasilitas = Gudang + Direksi
         luas_fasilitas = gudang_m2 + direksi_m2
         
         # A4-A6: Volume Material (Menggunakan koefisien dari file Excel Anda)
-        vol_patok = (keliling_bowplank / r_jarak) * h_patok
+        vol_patok = (keliling_bowplank / r_jarak) * (h_patok + 0.3) *1.05
         vol_papan = keliling_bowplank * 1.05 # Waste factor 5%
-        vol_skor  = (keliling_bowplank / r_jarak) * (h_patok * 0.75)
+        vol_skor  = (keliling_bowplank / r_jarak /2 ) * (h_patok * 2 * 0.5)
 
         # Daftar Harga Satuan (Bisa dihubungkan ke Sheet "Daftar Harga" nanti)
         data_hasil = [
             {"ID": "A1", "Uraian": "Luas Pembersihan Lahan", "Vol": luas_pembersihan, "Sat": "m2", "Harga": 1200},
             {"ID": "A2", "Uraian": "Keliling Bowplank", "Vol": keliling_bowplank, "Sat": "m1", "Harga": 85000},
             {"ID": "A3", "Uraian": "Luas Direksi Ket dan Gudang Bahan", "Vol": luas_fasilitas, "Sat": "m2", "Harga": 23000},
-            {"ID": "A4", "Uraian": "Volume Kebutuhan Patok bowplank", "Vol": vol_patok, "Sat": "m1", "Harga": 15000},
+            {"ID": "A4", "Uraian": "Volume Kebutuhan Patok bowplank", "Vol": vol_patok, "Sat": "m1", "Harga": 1200},
             {"ID": "A5", "Uraian": "Volume Kebutuhan papan bowplank", "Vol": vol_papan, "Sat": "m1", "Harga": 15000},
             {"ID": "A6", "Uraian": "Volume Kebutuhan Balok Skor bowplank", "Vol": vol_skor, "Sat": "m1", "Harga": 8500},
         ]
@@ -87,5 +87,6 @@ with tabs[0]:
         st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
     else:
         st.info("Silakan isi data di Tab Persiapan.")
+
 
 
