@@ -48,9 +48,9 @@ with tabs[1]:
         luas_fasilitas = gudang_m2 + direksi_m2
         
         # A4-A6: Volume Material (Menggunakan koefisien dari file Excel Anda)
-        vol_patok = (keliling_bowplank / r_jarak) * (h_patok + 0.3) *1.05
+        vol_patok = (keliling_bowplank / r_jarak + 1) * (h_patok + 0.3) *1.05
         vol_papan = keliling_bowplank * 1.05 # Waste factor 5%
-        vol_skor  = (keliling_bowplank / r_jarak /2 ) * (h_patok * 2 * 0.5)
+        vol_skor  = (keliling_bowplank / r_jarak /2 ) * (h_patok * 2 * 0.5) *1.05
 
         # Daftar Harga Satuan (Bisa dihubungkan ke Sheet "Daftar Harga" nanti)
         data_hasil = [
@@ -87,6 +87,7 @@ with tabs[0]:
         st.subheader(f"GRAND TOTAL: Rp {sum(st.session_state.total_costs.values()):,.2f}")
     else:
         st.info("Silakan isi data di Tab Persiapan.")
+
 
 
 
