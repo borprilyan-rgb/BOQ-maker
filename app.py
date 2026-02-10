@@ -72,16 +72,7 @@ with tabs[1]:
         direksi_m2 = st.number_input("Luas Direksi Keet (m2)", value=6.0)
 
     with col_out:
-        # ... (Kode perhitungan Anda di atas)
-        
-        # Update Dashboard Otomatis
-        subtotal_a = df_res["Total (Rp)"].sum()
-        st.session_state.total_costs["A. Persiapan & Bowplank"] = subtotal_a
-        
-        # Tambahkan Tombol Manual di bawah Metric
-        if st.button("🔄 Update Dashboard A", key="btn_a"):
-            st.success("Data Tab A berhasil diperbarui!")
-            st.rerun()
+
             
         # Rumus
         luas_pembersihan = p_lahan * l_lahan
@@ -100,6 +91,17 @@ with tabs[1]:
             {"ID": "A5", "Uraian": "Volume Kebutuhan papan bowplank", "Vol": vol_papan, "Sat": "m1", "Harga": 15000},
             {"ID": "A6", "Uraian": "Volume Kebutuhan Balok Skor bowplank", "Vol": vol_skor, "Sat": "m1", "Harga": 8500},
         ]
+
+        # ... (Kode perhitungan Anda di atas)
+        
+        # Update Dashboard Otomatis
+        subtotal_a = df_res["Total (Rp)"].sum()
+        st.session_state.total_costs["A. Persiapan & Bowplank"] = subtotal_a
+        
+        # Tambahkan Tombol Manual di bawah Metric
+        if st.button("🔄 Update Dashboard A", key="btn_a"):
+            st.success("Data Tab A berhasil diperbarui!")
+            st.rerun()
         
         df_res = pd.DataFrame(data_a)
         df_res["Total (Rp)"] = df_res["Vol"] * df_res["Harga"]
@@ -215,6 +217,7 @@ with tabs[3]:
                 st.image("gambar/pondasi batu kali.png", caption="Detail Penampang Pondasi Batu Kali", width=600)
             except:
                 st.info("💡 Tip: Unggah gambar 'pondasi batu kali.png' ke folder 'gambar' untuk referensi visual.")
+
 
 
 
