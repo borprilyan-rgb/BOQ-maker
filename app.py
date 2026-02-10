@@ -19,8 +19,17 @@ if 'total_costs' not in st.session_state:
 tabs = st.tabs(["📊 Dashboard", "A. Persiapan & Bowplank", "B. Gudang Bahan", "C. Pondasi Batu Kali"])
 
 # --- TAB: DASHBOARD ---
+# --- TAB: DASHBOARD ---
 with tabs[0]:
-    st.header("Ringkasan RAB Proyek")
+    col_dash1, col_dash2 = st.columns([3, 1])
+    with col_dash1:
+        st.header("Ringkasan RAB Proyek")
+    with col_dash2:
+        # Tombol Refresh Manual
+        if st.button("🔄 Refresh Kalkulasi"):
+            st.rerun()
+
+    # (Sisa kode dashboard Anda...)
     
     # Menghapus kunci 'A. Persiapan' jika tidak sengaja tercipta dari sesi sebelumnya
     if "A. Persiapan" in st.session_state.total_costs:
@@ -195,4 +204,5 @@ with tabs[3]:
                 st.image("gambar/pondasi batu kali.png", caption="Detail Penampang Pondasi Batu Kali", width=600)
             except:
                 st.info("💡 Tip: Unggah gambar 'pondasi batu kali.png' ke folder 'gambar' untuk referensi visual.")
+
 
