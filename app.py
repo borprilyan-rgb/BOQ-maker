@@ -103,16 +103,7 @@ with tabs[1]:
         st.session_state.total_costs["A. Persiapan & Bowplank"] = subtotal_a
         st.metric("Sub-Total Pekerjaan A", f"Rp {subtotal_a:,.2f}")
 
-        st.divider()
-        # Centering Gambar
-        sub_col1, sub_col2, sub_col3 = st.columns([1, 3, 1])
-        with sub_col2:
-            try:
-                st.image("gambar/persiapan bowplank.png", caption="Diagram Utama", width=600)
-            except:
-                st.info("Gambar tidak ditemukan")
-
- # ... (Kode perhitungan Anda di atas)
+        # ... (Kode perhitungan Anda di atas)
         
         # Update Dashboard Otomatis
         subtotal_a = df_res["Total (Rp)"].sum()
@@ -122,6 +113,17 @@ with tabs[1]:
         if st.button("🔄 Update Dashboard A", key="btn_a"):
             st.success("Data Tab A berhasil diperbarui!")
             st.rerun()
+
+        st.divider()
+        # Centering Gambar
+        sub_col1, sub_col2, sub_col3 = st.columns([1, 3, 1])
+        with sub_col2:
+            try:
+                st.image("gambar/persiapan bowplank.png", caption="Diagram Utama", width=600)
+            except:
+                st.info("Gambar tidak ditemukan")
+
+
 
 # --- TAB: B. GUDANG BAHAN ---
 with tabs[2]:
@@ -217,6 +219,7 @@ with tabs[3]:
                 st.image("gambar/pondasi batu kali.png", caption="Detail Penampang Pondasi Batu Kali", width=600)
             except:
                 st.info("💡 Tip: Unggah gambar 'pondasi batu kali.png' ke folder 'gambar' untuk referensi visual.")
+
 
 
 
