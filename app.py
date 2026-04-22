@@ -799,12 +799,12 @@ def show_cost_estimator():
 
 
 def show_portfolio_summary():
-import io
-import xlsxwriter
-import re
-from datetime import date
-
-tab_summary, tab_detailed = st.tabs(["FAD", "Rekap"])
+    import io
+    import xlsxwriter
+    import re
+    from datetime import date
+    
+    tab_summary, tab_detailed = st.tabs(["FAD", "Rekap"])
     
     with tab_summary:
             st.subheader("Tabel FAD")
