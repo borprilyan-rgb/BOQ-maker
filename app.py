@@ -605,8 +605,8 @@ def show_cost_estimator():
         total_custom_cost
     ])
 
-    t_preliminary = construction_subtotal * 0.05
-    t_contingency = construction_subtotal * 0.03
+    t_preliminary = (construction_subtotal - t_utility) * 0.05
+    t_contingency = (construction_subtotal - t_utility) * 0.03
     grand_total_hc = construction_subtotal + t_preliminary + t_contingency
 
     t_consultancy = gfa * consultancy_rate
