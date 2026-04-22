@@ -1,5 +1,7 @@
 streamlit
+st-gsheets-connection
+gspread
 pandas
-openpyxl
-numpy
+plotly
+altair
 xlsxwriter
