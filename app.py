@@ -798,7 +798,7 @@ def show_cost_estimator():
     st.session_state.projects[curr_id]["data"] = current_metrics
 
 
-def show_portfolio_summary():
+    def show_portfolio_summary():
     import io
     import xlsxwriter
     import re
