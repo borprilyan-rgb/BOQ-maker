@@ -1086,7 +1086,7 @@ def show_portfolio_summary():
         """
         st.markdown(html_string.replace("\n", ""), unsafe_allow_html=True)
 
-with tab_summary:
+    with tab_summary:
             st.subheader("Tabel FAD")
             active_id = st.session_state.current_proj_id
             today_str = date.today().strftime("%d-%m-%Y")
