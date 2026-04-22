@@ -687,7 +687,7 @@ def show_cost_estimator():
                     "38. Contingencies", "39. Consultancy Fee", "40. Quantity Surveyor", "41. Project Management", "42. Insurance Coverage"
                 ],
                 "Basis": [
-                    "5% Subtotal Hard Cost",
+                    f"5% x Rp {construction_subtotal:,.0f}",
                     f"{gba:,.0f} m2 x Rp {struc_earth:,.0f}",
                     f"{gba:,.0f} m2 x Rp {struc_found:,.0f}",
                     f"{gba:,.0f} m2 x Rp {struc_work:,.0f}",
@@ -724,11 +724,11 @@ def show_cost_estimator():
                     f"{res_fac_m2:,.0f} m2 x Rp {fac_res_rate:,.0f}",
                     f"{proj_fac_u:,.0f} Units x Rp {fac_proj_rate:,.0f}",
                     " | ".join(get_val("extra_items_summary_list", ["-"])),
-                    "3% Subtotal Hard Cost",
+                    f"3% x Rp {construction_subtotal:,.0f}",
                     f"{gfa:,.0f} m2 x Rp {consultancy_rate:,.0f}",
                     f"{qs_months} Months x Rp {qs_rate:,.0f}/Mo",
                     f"{pm_months} Months x Rp {pm_rate:,.0f}/Mo",
-                    f"{insurance_pct}% of Construction Subtotal"
+                    f"{insurance_pct}% x Rp {construction_subtotal:,.0f}"
                 ],
                 "Amount": [f"Rp {val:,.2f}" for val in raw_amounts]
             }
