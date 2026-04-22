@@ -612,7 +612,7 @@ def show_cost_estimator():
     t_consultancy = gfa * consultancy_rate
     t_qs = qs_months * qs_rate
     t_pm = pm_months * pm_rate
-    t_insurance = construction_subtotal * (insurance_pct / 100.0)
+    t_insurance = (construction_subtotal - t_utility) * (insurance_pct / 100.0)
 
     total_soft_cost = t_consultancy + t_qs + t_pm + t_insurance
     grand_total_project = grand_total_hc + total_soft_cost
