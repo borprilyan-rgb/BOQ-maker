@@ -798,13 +798,13 @@ def show_cost_estimator():
     st.session_state.projects[curr_id]["data"] = current_metrics
 
 
-    def show_portfolio_summary():
-    import io
-    import xlsxwriter
-    import re
-    from datetime import date
+def show_portfolio_summary():
+import io
+import xlsxwriter
+import re
+from datetime import date
 
-    tab_summary, tab_detailed = st.tabs(["FAD", "Rekap"])
+tab_summary, tab_detailed = st.tabs(["FAD", "Rekap"])
     
     with tab_summary:
             st.subheader("Tabel FAD")
