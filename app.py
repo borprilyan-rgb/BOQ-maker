@@ -31,6 +31,8 @@ try:
 except st.errors.StreamlitAPIException:
     pass # Ignore the Streamlit widget mutation lock error!
 
+st.set_page_config(page_title="Project Portfolio", layout="wide")
+
 PROJECT_DATABASE = {
     "Apartment": {
         #Foundation & Structure
