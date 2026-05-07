@@ -1,7 +1,7 @@
 streamlit
-st-gsheets-connection
-gspread
 pandas
-plotly
 altair
-xlsxwriter
+matplotlib
+plotly
+num2words
+streamlit_local_storage
